@@ -1,0 +1,47 @@
+@page "{id:int}"
+@model ProjectHub.Pages.Projects.DeleteModel
+@{
+    ViewData["Title"] = "Delete Project";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Delete Project</h1>
+        <p class="page-subtitle">This action cannot be undone.</p>
+    </div>
+    <a asp-page="Index" class="btn btn-secondary">← Back to List</a>
+</div>
+
+<div class="card danger-card">
+    <p class="danger-title">⚠️ Are you sure?</p>
+    <p class="text-muted">You are about to permanently delete the following project:</p>
+
+    <hr class="separator" />
+
+    <div class="detail-grid" style="margin-bottom:1.5rem;">
+        <div class="detail-field">
+            <span class="detail-label">Project Name</span>
+            <span class="detail-value">@Model.Project.Name</span>
+        </div>
+        <div class="detail-field">
+            <span class="detail-label">Client / Owner</span>
+            <span class="detail-value">@Model.Project.Client</span>
+        </div>
+        <div class="detail-field">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">@Model.Project.Status</span>
+        </div>
+        <div class="detail-field">
+            <span class="detail-label">Due Date</span>
+            <span class="detail-value">@(Model.Project.DueDate.HasValue ? Model.Project.DueDate.Value.ToString("dd MMM yyyy") : "–")</span>
+        </div>
+    </div>
+
+    <form method="post">
+        <input type="hidden" asp-for="Project.Id" />
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger" id="confirmDelete">🗑️ Yes, Delete Permanently</button>
+            <a asp-page="Details" asp-route-id="@Model.Project.Id" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

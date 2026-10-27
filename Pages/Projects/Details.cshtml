@@ -1,0 +1,106 @@
+@page "{id:int}"
+@model ProjectHub.Pages.Projects.DetailsModel
+@{
+    ViewData["Title"] = Model.Project.Name;
+
+    string StatusBadge(ProjectHub.Models.ProjectStatus s) => s switch {
+        ProjectHub.Models.ProjectStatus.NotStarted => "badge-not-started",
+        ProjectHub.Models.ProjectStatus.InProgress  => "badge-in-progress",
+        ProjectHub.Models.ProjectStatus.OnHold      => "badge-on-hold",
+        ProjectHub.Models.ProjectStatus.Completed   => "badge-completed",
+        ProjectHub.Models.ProjectStatus.Cancelled   => "badge-cancelled",
+        _ => ""
+    };
+
+    string PriorityBadge(ProjectHub.Models.ProjectPriority p) => p switch {
+        ProjectHub.Models.ProjectPriority.Low      => "badge-low",
+        ProjectHub.Models.ProjectPriority.Medium   => "badge-medium",
+        ProjectHub.Models.ProjectPriority.High     => "badge-high",
+        ProjectHub.Models.ProjectPriority.Critical => "badge-critical",
+        _ => ""
+    };
+
+    string StatusLabel(ProjectHub.Models.ProjectStatus s) => s switch {
+        ProjectHub.Models.ProjectStatus.NotStarted => "Not Started",
+        ProjectHub.Models.ProjectStatus.InProgress  => "In Progress",
+        ProjectHub.Models.ProjectStatus.OnHold      => "On Hold",
+        ProjectHub.Models.ProjectStatus.Completed   => "Completed",
+        ProjectHub.Models.ProjectStatus.Cancelled   => "Cancelled",
+        _ => s.ToString()
+    };
+
+    var p = Model.Project;
+    bool overdue = p.DueDate.HasValue
+        && p.DueDate.Value.Date < DateTime.UtcNow.Date
+        && p.Status != ProjectHub.Models.ProjectStatus.Completed
+        && p.Status != ProjectHub.Models.ProjectStatus.Cancelled;
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Project Details</h1>
+        <p class="page-subtitle">Full record for this project.</p>
+    </div>
+    <a asp-page="Index" class="btn btn-secondary">← Back to List</a>
+</div>
+
+<div class="card">
+    <div class="detail-grid">
+        <div class="detail-field" style="grid-column:1/-1;">
+            <span class="detail-label">Project Name</span>
+            <span class="detail-value" style="font-size:1.3rem;">@p.Name</span>
+        </div>
+        <div class="detail-field">
+            <span class="detail-label">Client / Owner</span>
+            <span class="detail-value">@p.Client</span>
+        </div>
+        <div class="detail-field">
+            <span class="detail-label">Team Lead</span>
+            <span class="detail-value">@(string.IsNullOrEmpty(p.TeamLead) ? "–" : p.TeamLead)</span>
+        </div>
+        <div class="detail-field">
+            <span class="detail-label">Status</span>
+            <span class="detail-value"><span class="badge @StatusBadge(p.Status)">@StatusLabel(p.Status)</span></span>
+        </div>
+        <div class="detail-field">
+            <span class="detail-label">Priority</span>
+            <span class="detail-value"><span class="badge @PriorityBadge(p.Priority)">@p.Priority</span></span>
+        </div>
+        <div class="detail-field">
+            <span class="detail-label">Start Date</span>
+            <span class="detail-value">@p.StartDate.ToString("dd MMM yyyy")</span>
+        </div>
+        <div class="detail-field">
+            <span class="detail-label">Due Date</span>
+            <span class="detail-value @(overdue ? "overdue" : "")">
+                @(p.DueDate.HasValue ? p.DueDate.Value.ToString("dd MMM yyyy") : "–")
+                @if (overdue) { <span> ⚠️ Overdue</span> }
+            </span>
+        </div>
+        <div class="detail-field">
+            <span class="detail-label">Budget</span>
+            <span class="detail-value @(p.Budget.HasValue ? "text-success" : "")">
+                @(p.Budget.HasValue ? $"${p.Budget:F2}" : "Not set")
+            </span>
+        </div>
+        <div class="detail-field">
+            <span class="detail-label">Date Created</span>
+            <span class="detail-value">@p.CreatedAt.ToString("dd MMM yyyy, HH:mm") UTC</span>
+        </div>
+        @if (!string.IsNullOrEmpty(p.Description))
+        {
+            <div class="detail-field" style="grid-column:1/-1;">
+                <span class="detail-label">Description</span>
+                <span class="detail-value">@p.Description</span>
+            </div>
+        }
+    </div>
+
+    <hr class="separator" />
+
+    <div class="form-actions">
+        <a asp-page="Edit"   asp-route-id="@p.Id" class="btn btn-warning">✏️ Edit</a>
+        <a asp-page="Delete" asp-route-id="@p.Id" class="btn btn-danger">🗑️ Delete</a>
+        <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

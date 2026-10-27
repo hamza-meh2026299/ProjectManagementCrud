@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ProjectHub – manage your projects with ease. Add, track, edit, and close projects in one place." />
+    <title>@ViewData["Title"] – ProjectHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <nav class="navbar">
+                <a class="navbar-brand" asp-page="/Index">
+                    <span class="brand-icon">🗂️</span>
+                    <span class="brand-text">ProjectHub</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a asp-page="/Index" class="nav-link">Home</a></li>
+                    <li><a asp-page="/Projects/Index" class="nav-link">All Projects</a></li>
+                    <li><a asp-page="/Projects/Create" class="nav-link nav-cta">+ New Project</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; @DateTime.Now.Year ProjectHub &mdash; Built with ASP.NET Core &amp; SQLite</p>
+        </div>
+    </footer>
+</body>
+</html>

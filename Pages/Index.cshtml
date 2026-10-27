@@ -1,0 +1,51 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="hero">
+    <span class="hero-emoji">🗂️</span>
+    <h1>Manage Your Projects</h1>
+    <p class="hero-subtitle">Track progress, manage deadlines, and keep every project on course — all in one place.</p>
+    <div class="hero-actions">
+        <a asp-page="/Projects/Index" class="btn btn-primary btn-lg">View All Projects</a>
+        <a asp-page="/Projects/Create" class="btn btn-secondary btn-lg">+ New Project</a>
+    </div>
+</section>
+
+<div class="stats-bar">
+    <div class="stat-card">
+        <span class="stat-value">@Model.Total</span>
+        <span class="stat-label">Total Projects</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">@Model.InProgress</span>
+        <span class="stat-label">In Progress</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">@Model.Completed</span>
+        <span class="stat-label">Completed</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">@Model.Overdue</span>
+        <span class="stat-label">Overdue</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">@Model.OnHold</span>
+        <span class="stat-label">On Hold</span>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <a asp-page="/Projects/Index" class="quick-card">
+        <span class="quick-card-icon">📋</span>
+        <span class="quick-card-title">All Projects</span>
+        <span class="quick-card-desc">Browse, search, and filter your full project list.</span>
+    </a>
+    <a asp-page="/Projects/Create" class="quick-card">
+        <span class="quick-card-icon">➕</span>
+        <span class="quick-card-title">New Project</span>
+        <span class="quick-card-desc">Create a new project with name, dates, and priority.</span>
+    </a>
+</div>

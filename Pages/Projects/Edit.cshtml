@@ -1,0 +1,76 @@
+@page "{id:int}"
+@model ProjectHub.Pages.Projects.EditModel
+@{
+    ViewData["Title"] = "Edit Project";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Edit Project</h1>
+        <p class="page-subtitle">Update the details for "@Model.Project.Name".</p>
+    </div>
+    <a asp-page="Index" class="btn btn-secondary">← Back to List</a>
+</div>
+
+<div class="card">
+    <form method="post">
+        <input type="hidden" asp-for="Project.Id" />
+        <input type="hidden" asp-for="Project.CreatedAt" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label asp-for="Project.Name"></label>
+                <input asp-for="Project.Name" class="form-control" id="editName" />
+                <span asp-validation-for="Project.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Project.Client"></label>
+                <input asp-for="Project.Client" class="form-control" id="editClient" />
+                <span asp-validation-for="Project.Client" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Project.Status"></label>
+                <select asp-for="Project.Status" class="form-control" id="editStatus"
+                        asp-items="Html.GetEnumSelectList<ProjectHub.Models.ProjectStatus>()"></select>
+                <span asp-validation-for="Project.Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Project.Priority"></label>
+                <select asp-for="Project.Priority" class="form-control" id="editPriority"
+                        asp-items="Html.GetEnumSelectList<ProjectHub.Models.ProjectPriority>()"></select>
+                <span asp-validation-for="Project.Priority" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Project.StartDate"></label>
+                <input asp-for="Project.StartDate" class="form-control" type="date" id="editStart" />
+                <span asp-validation-for="Project.StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Project.DueDate"></label>
+                <input asp-for="Project.DueDate" class="form-control" type="date" id="editDue" />
+                <span asp-validation-for="Project.DueDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Project.Budget"></label>
+                <input asp-for="Project.Budget" class="form-control" type="number" step="0.01" min="0" id="editBudget" />
+                <span asp-validation-for="Project.Budget" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Project.TeamLead"></label>
+                <input asp-for="Project.TeamLead" class="form-control" id="editLead" />
+                <span asp-validation-for="Project.TeamLead" class="text-danger"></span>
+            </div>
+            <div class="form-group full-width">
+                <label asp-for="Project.Description"></label>
+                <textarea asp-for="Project.Description" class="form-control" id="editDesc"></textarea>
+                <span asp-validation-for="Project.Description" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">💾 Save Changes</button>
+            <a asp-page="Details" asp-route-id="@Model.Project.Id" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

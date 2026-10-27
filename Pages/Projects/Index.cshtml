@@ -1,0 +1,120 @@
+@page
+@model ProjectHub.Pages.Projects.IndexModel
+@{
+    ViewData["Title"] = "All Projects";
+}
+
+@functions {
+    string StatusBadge(ProjectHub.Models.ProjectStatus s) => s switch {
+        ProjectHub.Models.ProjectStatus.NotStarted => "badge-not-started",
+        ProjectHub.Models.ProjectStatus.InProgress  => "badge-in-progress",
+        ProjectHub.Models.ProjectStatus.OnHold      => "badge-on-hold",
+        ProjectHub.Models.ProjectStatus.Completed   => "badge-completed",
+        ProjectHub.Models.ProjectStatus.Cancelled   => "badge-cancelled",
+        _ => ""
+    };
+
+    string PriorityBadge(ProjectHub.Models.ProjectPriority p) => p switch {
+        ProjectHub.Models.ProjectPriority.Low      => "badge-low",
+        ProjectHub.Models.ProjectPriority.Medium   => "badge-medium",
+        ProjectHub.Models.ProjectPriority.High     => "badge-high",
+        ProjectHub.Models.ProjectPriority.Critical => "badge-critical",
+        _ => ""
+    };
+
+    string StatusLabel(ProjectHub.Models.ProjectStatus s) => s switch {
+        ProjectHub.Models.ProjectStatus.NotStarted => "Not Started",
+        ProjectHub.Models.ProjectStatus.InProgress  => "In Progress",
+        ProjectHub.Models.ProjectStatus.OnHold      => "On Hold",
+        ProjectHub.Models.ProjectStatus.Completed   => "Completed",
+        ProjectHub.Models.ProjectStatus.Cancelled   => "Cancelled",
+        _ => s.ToString()
+    };
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">All Projects</h1>
+        <p class="page-subtitle">@Model.Projects.Count project(s) found</p>
+    </div>
+    <a asp-page="Create" class="btn btn-primary">+ New Project</a>
+</div>
+
+@if (TempData["Success"] is string msg)
+{
+    <div class="alert alert-success" id="successAlert">✅ @msg</div>
+}
+
+<form method="get" class="search-bar">
+    <input id="searchInput" name="search" type="text" class="form-control"
+           placeholder="Search by name or client…"
+           value="@Model.SearchQuery" />
+    <select name="status" class="form-control" style="max-width:160px;" id="statusFilter">
+        <option value="">All Statuses</option>
+        @foreach (var s in Enum.GetValues<ProjectHub.Models.ProjectStatus>())
+        {
+            <option value="@s" selected="@(Model.StatusFilter == s.ToString())">@StatusLabel(s)</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-secondary">Filter</button>
+    @if (!string.IsNullOrEmpty(Model.SearchQuery) || !string.IsNullOrEmpty(Model.StatusFilter))
+    {
+        <a asp-page="Index" class="btn btn-secondary">Clear</a>
+    }
+</form>
+
+@if (!Model.Projects.Any())
+{
+    <div class="empty-state">
+        <span class="empty-icon">📭</span>
+        <p class="empty-title">No projects found</p>
+        <p>@(string.IsNullOrEmpty(Model.SearchQuery) && string.IsNullOrEmpty(Model.StatusFilter) ? "Create your first project to get started." : "Try adjusting your search or filters.")</p>
+        <a asp-page="Create" class="btn btn-primary mt-2">+ Create First Project</a>
+    </div>
+}
+else
+{
+    var now = DateTime.UtcNow.Date;
+    <div class="table-wrapper">
+        <table class="data-table" id="projectsTable">
+            <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Client / Owner</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Due Date</th>
+                    <th>Team Lead</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Projects)
+                {
+                    bool isOverdue = p.DueDate.HasValue
+                        && p.DueDate.Value.Date < now
+                        && p.Status != ProjectHub.Models.ProjectStatus.Completed
+                        && p.Status != ProjectHub.Models.ProjectStatus.Cancelled;
+
+                    <tr>
+                        <td class="td-name">@p.Name</td>
+                        <td>@p.Client</td>
+                        <td><span class="badge @StatusBadge(p.Status)">@StatusLabel(p.Status)</span></td>
+                        <td><span class="badge @PriorityBadge(p.Priority)">@p.Priority</span></td>
+                        <td class="@(isOverdue ? "overdue" : "")">
+                            @(p.DueDate.HasValue ? p.DueDate.Value.ToString("dd MMM yyyy") + (isOverdue ? " ⚠️" : "") : "–")
+                        </td>
+                        <td class="text-muted">@(string.IsNullOrEmpty(p.TeamLead) ? "–" : p.TeamLead)</td>
+                        <td>
+                            <div style="display:flex;gap:0.4rem;">
+                                <a asp-page="Details" asp-route-id="@p.Id" class="btn btn-secondary btn-sm">View</a>
+                                <a asp-page="Edit"    asp-route-id="@p.Id" class="btn btn-warning btn-sm">Edit</a>
+                                <a asp-page="Delete"  asp-route-id="@p.Id" class="btn btn-danger btn-sm">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
